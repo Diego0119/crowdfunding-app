@@ -32,3 +32,26 @@ class Contribution(Base):
 
     user = relationship("User")
     project = relationship("Project")
+
+class Evaluation(Base):
+    __tablename__ = 'evaluations'
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    rating = Column(Integer, nullable=False)
+    comment = Column(Text)  #este es comentario de la reseña o evaluacion :P
+    created_at = Column(DateTime, nullable=False)
+
+    user = relationship("User")
+    project = relationship("Project")
+
+class Comment(Base):  #esto son comentarios generales :D
+    __tablename__ = 'comments'
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime, nullable=False)
+
+    user = relationship("User")
+    project = relationship("Project")
