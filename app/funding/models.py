@@ -1,56 +1,66 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey,  DateTime, Text, Enum, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import Integer, String, Float, Date, ForeignKey,  DateTime, Text, Enum, Boolean
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.database import Base
+from typing import TYPE_CHECKING, Optional, List
+
+if TYPE_CHECKING:
+    from app.account.models import User
+
 
 class Project(Base):
     __tablename__ = 'projects'
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True, nullable=False)
-    description = Column(Text, nullable=False)
-    goal_amount = Column(Float, nullable=False)
-    contributions_count = Column(Integer, default=0)
-    current_amount = Column(Float, default=0.0)
-    start_date = Column(DateTime, nullable=False)
-    end_date = Column(DateTime, nullable=False)
-    status = Column(Enum("activo", "cancelled", "completed"), default="active")
 
-    creator_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String, index=True, nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    goal_amount: Mapped[float] = mapped_column(nullable=False)
+    contributions_count: Mapped[int] = mapped_column(default=0)
+    current_amount: Mapped[float] = mapped_column(default=0.0)
+    start_date: Mapped[DateTime] = mapped_column(nullable=False)
+    end_date: Mapped[DateTime] = mapped_column(nullable=False)
+    status: Mapped[str] = mapped_column(Enum("active", "cancelled", "completed"), default="active")
 
-    creator = relationship("User", back_populates="projects")
-    contributions = relationship("Contribution", back_populates="project")
-    evaluations = relationship("Evaluation", back_populates="project")
+    creator_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+
+    creator: Mapped["User"] = relationship("User", back_populates="projects")
+    contributions: Mapped[List["Contribution"]] = relationship("Contribution", back_populates="project")
+    evaluations: Mapped[List["Evaluation"]] = relationship("Evaluation", back_populates="project")
 
 class Contribution(Base):
     __tablename__ = 'contributions'
-    id = Column(Integer, primary_key=True, index=True)
-    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    amount = Column(Float, nullable=False)
-    contributed_at = Column(DateTime, nullable=False)
-    payment_method = Column(String, nullable=False)
 
-    user = relationship("User", back_populates="contributions")
-    project = relationship("Project", back_populates="contributions")
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    amount: Mapped[float] = mapped_column(nullable=False)
+    contributed_at: Mapped[DateTime] = mapped_column(nullable=False)
+    payment_method: Mapped[str] = mapped_column(String, nullable=False)
+
+    user: Mapped["User"] = relationship("User", back_populates="contributions")
+    project: Mapped["Project"] = relationship("Project", back_populates="contributions")
 
 class Evaluation(Base):
     __tablename__ = 'evaluations'
-    id = Column(Integer, primary_key=True, index=True)
-    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    rating = Column(Integer, nullable=False)
-    comment = Column(Text)  #este es comentario de la reseña o evaluacion :P
-    created_at = Column(DateTime, nullable=False)
 
-    user = relationship("User")
-    project = relationship("Project", back_populates="evaluations")
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    rating: Mapped[int] = mapped_column(nullable=False)
+    comment: Mapped[Optional[str]] = mapped_column(Text)  # Este es comentario de la reseña o evaluacion
+    created_at: Mapped[DateTime] = mapped_column(nullable=False)
+
+    user: Mapped["User"] = relationship("User")
+    project: Mapped["Project"] = relationship("Project", back_populates="evaluations")
 
 class Comment(Base):  #esto son comentarios generales :D
     __tablename__ = 'comments'
-    id = Column(Integer, primary_key=True, index=True)
-    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    content = Column(Text, nullable=False)
-    created_at = Column(DateTime, nullable=False)
+    
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[DateTime] = mapped_column(nullable=False)
 
-    user = relationship("User")
-    project = relationship("Project")
+    # Relaciones
+    user: Mapped["User"] = relationship("User")
+    project: Mapped["Project"] = relationship("Project")

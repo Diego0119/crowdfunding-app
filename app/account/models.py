@@ -1,17 +1,21 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey,  DateTime, Text, Enum, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, DateTime, Text, Enum, Boolean
+from sqlalchemy.orm import relationship,  Mapped, mapped_column
 from app.database import Base
+from typing import TYPE_CHECKING, Optional, List
 
+if TYPE_CHECKING:
+    from app.funding.models import Project, Contribution, Evaluation, Comment
 
 class User(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True, index=True) #ver si hacerlo con mapped column o column
-    username = Column(String, unique=True, index=True)
-    email = Column(String, unique=True, index=True)
-    password = Column(String)
 
-    projects_created = Column(Integer, default=0)
-    projects_contributed = Column(Integer, default=0)
-
-    projects = relationship("Project", back_populates="creator")
-    contributions = relationship("Contribution", back_populates="user")
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    username: Mapped[str] = mapped_column(String, unique=True, index=True)
+    email: Mapped[str] = mapped_column(String, unique=True, index=True)
+    password: Mapped[Optional[str]] = mapped_column(String)
+    
+    projects_created: Mapped[int] = mapped_column(default=0)
+    projects_contributed: Mapped[int] = mapped_column(default=0)
+    
+    projects: Mapped[List["Project"]] = relationship("Project", back_populates="creator")
+    contributions: Mapped[List["Contribution"]] = relationship("Contribution", back_populates="user")
