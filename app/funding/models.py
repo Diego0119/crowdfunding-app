@@ -26,42 +26,41 @@ class Project(Base):
     contributions: Mapped[List["Contribution"]] = relationship("Contribution", back_populates="project")
     evaluations: Mapped[List["Evaluation"]] = relationship("Evaluation", back_populates="project")
 
+class Contribution(Base):
+    __tablename__ = 'contributions'
 
-# class Contribution(Base):
-#     __tablename__ = 'contributions'
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    amount: Mapped[float] = mapped_column(nullable=False)
+    contributed_at: Mapped[datetime] = mapped_column(nullable=False)
+    payment_method: Mapped[str] = mapped_column(String, nullable=False)
 
-#     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-#     project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
-#     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-#     amount: Mapped[float] = mapped_column(nullable=False)
-#     contributed_at: Mapped[DateTime] = mapped_column(nullable=False)
-#     payment_method: Mapped[str] = mapped_column(String, nullable=False)
+    user: Mapped["User"] = relationship("User", back_populates="contributions")
+    project: Mapped["Project"] = relationship("Project", back_populates="contributions")
 
-#     user: Mapped["User"] = relationship("User", back_populates="contributions")
-#     project: Mapped["Project"] = relationship("Project", back_populates="contributions")
+class Evaluation(Base):
+    __tablename__ = 'evaluations'
 
-# class Evaluation(Base):
-#     __tablename__ = 'evaluations'
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    rating: Mapped[int] = mapped_column(nullable=False)
+    comment: Mapped[Optional[str]] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(nullable=False)
 
-#     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-#     project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
-#     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-#     rating: Mapped[int] = mapped_column(nullable=False)
-#     comment: Mapped[Optional[str]] = mapped_column(Text)  # Este es comentario de la reseña o evaluacion
-#     created_at: Mapped[DateTime] = mapped_column(nullable=False)
 
-#     user: Mapped["User"] = relationship("User")
-#     project: Mapped["Project"] = relationship("Project", back_populates="evaluations")
+    user: Mapped["User"] = relationship("User")
+    project: Mapped["Project"] = relationship("Project", back_populates="evaluations")
 
-# class Comment(Base):  #esto son comentarios generales :D
-#     __tablename__ = 'comments'
+class Comment(Base):
+    __tablename__ = 'comments'
     
-#     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-#     project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
-#     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-#     content: Mapped[str] = mapped_column(Text, nullable=False)
-#     created_at: Mapped[DateTime] = mapped_column(nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[DateTime] = mapped_column(nullable=False)
 
-#     Relaciones
-#     user: Mapped["User"] = relationship("User")
-#     project: Mapped["Project"] = relationship("Project")
+    user: Mapped["User"] = relationship("User")
+    project: Mapped["Project"] = relationship("Project")
