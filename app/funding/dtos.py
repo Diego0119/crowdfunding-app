@@ -36,3 +36,21 @@ class ProjectOut(ProjectBase):
     class Config:
         orm_mode = True  
 
+# dtos para la contribucion
+class ContributionBase(BaseModel):
+    amount: float  
+    payment_method: str  
+
+class ContributionCreate(ContributionBase):
+    project_id: int  
+    user_id: int 
+
+class ContributionOut(ContributionBase):
+    id: int 
+    project_id: int  
+    user_id: int  
+    contributed_at: datetime  
+
+    class Config:
+        orm_mode = True  
+
