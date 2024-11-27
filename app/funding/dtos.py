@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
-#dtos para el proyecto
+# dtos para el proyecto
 class ProjectBase(BaseModel):
     name: str 
     description: str  
